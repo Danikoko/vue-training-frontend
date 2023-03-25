@@ -83,7 +83,22 @@
         computed: {
             ...mapState(useGeneralStore, [
                 'API_URL',
+            ]),
+            ...mapState(useUserStore, [
+                'userIsAuth'
             ])
+        },
+        watch: {
+            userIsAuth() {
+                /* 
+                    By default the userIsAuth value is false.
+                    On successful registration, after the storeLoggedInUser
+                    method is called, the userIsAuth value is 
+                    set to true and this watch property is invoked.
+                    The code below will then run.
+                */
+                this.$router.push('/');
+            }
         },
         methods: {
             ...mapActions(useUserStore, [
