@@ -4,7 +4,7 @@
         <div class="row clearfix">
             <div class="col-12">
                 <nav class="navbar navbar-expand-lg">
-                    <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/vue-logo.png" width="30" height="30" class="d-inline-block align-top mr-2" alt="" />Vue Training - Danikoko</a>
+                    <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/vue-logo.png" width="30" height="30" class="d-inline-block align-top mr-2" alt="" />Vue.js Training - Danikoko</a>
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link" href="javascript:void(0);">Documentation</a></li>
                         <li class="nav-item"><router-link class="nav-link" to="/register">Sign Up</router-link></li>

@@ -4,7 +4,7 @@
             <div class="row clearfix">
                 <div class="col-12">
                     <nav class="navbar navbar-expand-lg">
-                        <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/vue-logo.png" width="30" height="30" class="d-inline-block align-top mr-2" alt="" />Vue Training - Danikoko</a>
+                        <a class="navbar-brand" href="javascript:void(0);"><img src="/assets/images/vue-logo.png" width="30" height="30" class="d-inline-block align-top mr-2" alt="" />Vue.js Training - Danikoko</a>
                         <ul class="navbar-nav">
                             <li class="nav-item"><a class="nav-link" href="javascript:void(0);">Documentation</a></li>
                             <li class="nav-item"><router-link class="nav-link" to="/login">Sign In</router-link></li>
@@ -40,6 +40,10 @@
                         <div class="body">
                             <form class="form-auth-small">
                                 <div class="form-group">
+                                    <label for="signup-email" class="control-label sr-only">Name</label>
+                                    <input type="text" class="form-control" id="signup-name" placeholder="Your name" />
+                                </div>
+                                <div class="form-group">
                                     <label for="signup-email" class="control-label sr-only">Email</label>
                                     <input type="email" class="form-control" id="signup-email" placeholder="Your email" />
                                 </div>
@@ -62,8 +66,40 @@
   </template>
   
 <script>
+    import axios from 'axios';
+    import useGeneralStore from '../store/general';
+    import { mapState } from 'pinia';
     export default {
-
+        data: () => {
+            return {
+                name: '',
+                email: '',
+                password: '',
+                submitting: false
+            }
+        },
+        computed: {
+            ...mapState(useGeneralStore, [
+                'API_URL',
+            ])
+        },
+        methods: {
+            registerUser() {
+                const _this = this;
+                _this.submitting = true;
+                axios.post(`${_this.API_URL}register`, {
+                    name: _this.name,
+                    email: _this.email,
+                    name: _this.password,
+                }).then(RESPONSE => {
+                    console.log(RESPONSE)
+                }).catch(ERROR => {
+                    alert(ERROR.response.data.message);
+                }).then(() => {
+                    _this.submitting = false;
+                });
+            }
+        }
     }
 </script>
   

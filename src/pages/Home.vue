@@ -4,7 +4,7 @@
           <div class="container-fluid">
               <div class="navbar-left">
                   <div class="navbar-btn">
-                      <router-link to="/"><img src="/assets/images/vue-logo.png" alt="Vue Training Logo" class="img-fluid logo" /></router-link>
+                      <router-link to="/"><img src="/assets/images/vue-logo.png" alt="Vue.js Training Logo" class="img-fluid logo" /></router-link>
                       <button type="button" class="btn-toggle-offcanvas"><i class="lnr lnr-menu fa fa-bars"></i></button>
                   </div>
                   <a href="javascript:void(0);" class="icon-menu btn-toggle-fullwidth"><i class="fa fa-arrow-left"></i></a>
@@ -180,7 +180,7 @@
 
       <div id="left-sidebar" class="sidebar">
           <div class="navbar-brand">
-              <router-link to="/"><img src="/assets/images/vue-logo.png" alt="Vue Training Logo" class="img-fluid logo" /><span>Vue Training</span></router-link>
+              <router-link to="/"><img src="/assets/images/vue-logo.png" alt="Vue.js Training Logo" class="img-fluid logo" /><span>Vue.js Training</span></router-link>
               <button type="button" class="btn-toggle-offcanvas btn btn-sm btn-default float-right"><i class="lnr lnr-menu fa fa-chevron-circle-left"></i></button>
           </div>
           <div class="sidebar-scroll">
