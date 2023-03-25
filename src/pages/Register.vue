@@ -38,18 +38,18 @@
                             <p class="lead">Create an account</p>
                         </div>
                         <div class="body">
-                            <form class="form-auth-small">
+                            <form class="form-auth-small" @submit.prevent="submitting === false && registerUser()">
                                 <div class="form-group">
                                     <label for="signup-email" class="control-label sr-only">Name</label>
-                                    <input type="text" class="form-control" id="signup-name" placeholder="Your name" />
+                                    <input v-model="name" type="text" class="form-control" id="signup-name" placeholder="Your name" />
                                 </div>
                                 <div class="form-group">
                                     <label for="signup-email" class="control-label sr-only">Email</label>
-                                    <input type="email" class="form-control" id="signup-email" placeholder="Your email" />
+                                    <input v-model="email" type="email" class="form-control" id="signup-email" placeholder="Your email" />
                                 </div>
                                 <div class="form-group">
                                     <label for="signup-password" class="control-label sr-only">Password</label>
-                                    <input type="password" class="form-control" id="signup-password" placeholder="Password" />
+                                    <input v-model="password" type="password" class="form-control" id="signup-password" placeholder="Password" />
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-lg btn-block">REGISTER</button>
                             </form>
@@ -63,12 +63,13 @@
         </div>
     </div>
 
-  </template>
+</template>
   
 <script>
     import axios from 'axios';
     import useGeneralStore from '../store/general';
-    import { mapState } from 'pinia';
+    import useUserStore from '../store/user';
+    import { mapActions, mapState } from 'pinia';
     export default {
         data: () => {
             return {
@@ -84,16 +85,23 @@
             ])
         },
         methods: {
+            ...mapActions(useUserStore, [
+                'storeLoggedInUser'
+            ]),
             registerUser() {
                 const _this = this;
                 _this.submitting = true;
                 axios.post(`${_this.API_URL}register`, {
                     name: _this.name,
                     email: _this.email,
-                    name: _this.password,
+                    password: _this.password,
                 }).then(RESPONSE => {
-                    console.log(RESPONSE)
+                    const token = RESPONSE.data.authorisation.token;
+                    const user = RESPONSE.data.user;
+                    _this.storeLoggedInUser(token, user);
+                    alert(RESPONSE.data.message);
                 }).catch(ERROR => {
+                    console.log(ERROR);
                     alert(ERROR.response.data.message);
                 }).then(() => {
                     _this.submitting = false;
