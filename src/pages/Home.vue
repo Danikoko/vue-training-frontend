@@ -22,7 +22,7 @@
                                     <router-link to="/login" class="icon-menu"><i class="icon-power"></i></router-link>
                                     WITH 
                                 -->
-                                <a @click.prevent="logUserOut()" href="#" class="icon-menu"><i class="icon-power"></i></a>
+                                <a @click.prevent="loggingOut === false && logUserOut()" href="#" class="icon-menu"><i class="icon-power"></i></a>
                             </li>
                       </ul>
                   </div>
@@ -210,7 +210,7 @@
                                     <a href="#"><i class="icon-power"></i>Logout</a> 
                                     WITH 
                                 -->
-                                <a @click.prevent="logUserOut()" href="#"><i class="icon-power"></i>Logout</a>
+                                <a @click.prevent="loggingOut === false && logUserOut()" href="#"><i class="icon-power"></i>Logout</a>
                             </li>
                       </ul>
                   </div>
@@ -373,7 +373,7 @@ import { mapState, mapActions } from 'pinia';
 export default {
     data: () => {
         return {
-            submitting: false
+            loggingOut: false
         }
     },
     computed: {
@@ -405,7 +405,7 @@ export default {
         ]),
         logUserOut() {
             const _this = this;
-            _this.submitting = true;
+            _this.loggingOut = true;
             axios.post(`${_this.API_URL}logout`, {}, {
                 headers: {
                     Authorization: `Bearer ${_this.token}`
@@ -417,7 +417,7 @@ export default {
                 alert(ERROR.response.data.message);
             }).then(() => {
                 _this.logoutUser();
-                _this.submitting = false;
+                _this.loggingOut = false;
             });
         },
     }
