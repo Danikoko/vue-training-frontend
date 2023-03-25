@@ -13,12 +13,17 @@
               <div class="navbar-right">
                   <div id="navbar-menu">
                       <ul class="nav navbar-nav">
-                          <li>
+                            <li>
                               <a href="javascript:void(0);" class="right_toggle icon-menu" title="Right Menu"><i class="icon-settings"></i></a>
-                          </li>
-                          <li>
-                              <router-link to="/login" class="icon-menu"><i class="icon-power"></i></router-link>
-                          </li>
+                            </li>
+                            <li>
+                                <!-- 
+                                    REPLACE
+                                    <router-link to="/login" class="icon-menu"><i class="icon-power"></i></router-link>
+                                    WITH 
+                                -->
+                                <a @click.prevent="logUserOut()" href="#" class="icon-menu"><i class="icon-power"></i></a>
+                            </li>
                       </ul>
                   </div>
               </div>
@@ -192,16 +197,21 @@
                       <span>Welcome,</span>
                       <a href="javascript:void(0);" class="dropdown-toggle user-name" data-toggle="dropdown"><strong>Christy Wert</strong></a>
                       <ul class="dropdown-menu dropdown-menu-right account">
-                          <li>
-                              <a href="#"><i class="icon-user"></i>My Profile</a>
-                          </li>
-                          <li>
-                              <a href="javascript:void(0);"><i class="icon-settings"></i>Settings</a>
-                          </li>
-                          <li class="divider"></li>
-                          <li>
-                              <a href="#"><i class="icon-power"></i>Logout</a>
-                          </li>
+                            <li>
+                                <a href="#"><i class="icon-user"></i>My Profile</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);"><i class="icon-settings"></i>Settings</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <!-- 
+                                    REPLACE
+                                    <a href="#"><i class="icon-power"></i>Logout</a> 
+                                    WITH 
+                                -->
+                                <a @click.prevent="logUserOut()" href="#"><i class="icon-power"></i>Logout</a>
+                            </li>
                       </ul>
                   </div>
               </div>
@@ -355,21 +365,62 @@
 </template>
 
 <script>
+import axios from 'axios';
 import useInventoryStore from '../store/inventory';
+import useGeneralStore from '../store/general';
+import useUserStore from '../store/user';
 import { mapState, mapActions } from 'pinia';
 export default {
-  computed: {
-    ...mapState(useInventoryStore, [
-      'totalLaptops',
-      'pricePerLaptop',
-      'totalLaptopPrices'
-    ])
-  },
-  methods: {
-    ...mapActions(useInventoryStore, [
-      'addLaptop'
-    ])
-  }
+    data: () => {
+        return {
+            submitting: false
+        }
+    },
+    computed: {
+        ...mapState(useInventoryStore, []),
+        ...mapState(useGeneralStore, [
+            'API_URL'
+        ]),
+        ...mapState(useUserStore, [
+            'token',
+            'userIsAuth'
+        ])
+    },
+    watch: {
+        userIsAuth() {
+            /* 
+                At this point the userIsAuth value is true.
+                On successful logout, after the storeLoggedInUser
+                method is called, the userIsAuth value is 
+                set to false and this watch property is invoked.
+                The code below will then run.
+            */
+            this.$router.push('/login');
+        }
+    },
+    methods: {
+        ...mapActions(useInventoryStore, []),
+        ...mapActions(useUserStore, [
+            'logoutUser'
+        ]),
+        logUserOut() {
+            const _this = this;
+            _this.submitting = true;
+            axios.post(`${_this.API_URL}logout`, {}, {
+                headers: {
+                    Authorization: `Bearer ${_this.token}`
+                }
+            }).then(RESPONSE => {
+                alert(RESPONSE.data.message);
+            }).catch(ERROR => {
+                console.log(ERROR);
+                alert(ERROR.response.data.message);
+            }).then(() => {
+                _this.logoutUser();
+                _this.submitting = false;
+            });
+        },
+    }
 }
 </script>
 
