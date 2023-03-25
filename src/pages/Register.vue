@@ -40,7 +40,7 @@
                         <div class="body">
                             <form class="form-auth-small" @submit.prevent="submitting === false && registerUser()">
                                 <div class="form-group">
-                                    <label for="signup-email" class="control-label sr-only">Name</label>
+                                    <label for="signup-name" class="control-label sr-only">Name</label>
                                     <input v-model="name" type="text" class="form-control" id="signup-name" placeholder="Your name" />
                                 </div>
                                 <div class="form-group">

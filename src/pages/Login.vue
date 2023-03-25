@@ -38,14 +38,14 @@
                         <p class="lead">Login to your account</p>
                     </div>
                     <div class="body">
-                        <form class="form-auth-small" action="index.html">
+                        <form class="form-auth-small" @submit.prevent="submitting === false && loginUser()">
                             <div class="form-group">
                                 <label for="signin-email" class="control-label sr-only">Email</label>
-                                <input type="email" class="form-control" id="signin-email" value="user@domain.com" placeholder="Email" />
+                                <input v-model="email" type="email" class="form-control" id="signin-email" placeholder="Email" />
                             </div>
                             <div class="form-group">
                                 <label for="signin-password" class="control-label sr-only">Password</label>
-                                <input type="password" class="form-control" id="signin-password" value="thisisthepassword" placeholder="Password" />
+                                <input v-model="password" type="password" class="form-control" id="signin-password" placeholder="Password" />
                             </div>
                             <div class="form-group clearfix">
                                 <label class="fancy-checkbox element-left">
@@ -68,9 +68,47 @@
 </template>
 
 <script>
-export default {
-
-}
+    import axios from 'axios';
+    import useGeneralStore from '../store/general';
+    import useUserStore from '../store/user';
+    import { mapActions, mapState } from 'pinia';
+    export default {
+        data: () => {
+            return {
+                email: '',
+                password: '',
+                submitting: false
+            }
+        },
+        computed: {
+            ...mapState(useGeneralStore, [
+                'API_URL',
+            ])
+        },
+        methods: {
+            ...mapActions(useUserStore, [
+                'storeLoggedInUser'
+            ]),
+            loginUser() {
+                const _this = this;
+                _this.submitting = true;
+                axios.post(`${_this.API_URL}login`, {
+                    email: _this.email,
+                    password: _this.password,
+                }).then(RESPONSE => {
+                    const token = RESPONSE.data.authorisation.token;
+                    const user = RESPONSE.data.user;
+                    _this.storeLoggedInUser(token, user);
+                    alert(RESPONSE.data.message);
+                }).catch(ERROR => {
+                    console.log(ERROR);
+                    alert(ERROR.response.data.message);
+                }).then(() => {
+                    _this.submitting = false;
+                });
+            }
+        }
+    }
 </script>
 
 <style>
