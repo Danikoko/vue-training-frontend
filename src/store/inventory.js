@@ -2,15 +2,22 @@ import { defineStore } from 'pinia';
 
 const useInventoryStore = defineStore('inventory', {
     state: () => ({ 
-        totalLaptops: 0,
-        pricePerLaptop: 250000
+        allInventories: localStorage.getItem('allInventories') || null
     }),
     getters: {
-        totalLaptopPrices: (state) => state.totalLaptops * state.pricePerLaptop,
+        inventories: state => {
+            return (
+                state.allInventories
+                ? JSON.parse(state.allInventories)
+                : []
+            );
+        }
     },
     actions: {
-        addLaptop() {
-            this.totalLaptops++;
+        storeInventories(allInventories) {
+            const stringifiedData = JSON.stringify(allInventories);
+            localStorage.getItem('allInventories', allInventories)
+            this.allInventories = stringifiedData;
         },
     }
 });

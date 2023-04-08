@@ -256,7 +256,7 @@
                                           </div>
                                           <div class="number float-right text-right">
                                               <h6>Total Amount</h6>
-                                              <span class="font700">$22,500</span>
+                                              <span class="font700">${{ totalPrice }}</span>
                                           </div>
                                       </div>
                                       <div class="progress progress-xs progress-transparent custom-color-blue mb-0 mt-3">
@@ -328,32 +328,33 @@
                           </div>
                           <div class="body">
                               <div class="table-responsive">
-                                  <table class="table table-hover js-basic-example dataTable table-custom mb-0">
-                                      <thead class="thead-dark">
-                                          <tr>
-                                              <th>Date Added</th>
-                                              <th>Name</th>
-                                              <th>Type</th>
-                                              <th>Status</th>
-                                              <th>Edit</th>
-                                              <th>Delete</th>
-                                          </tr>
-                                      </thead>
-                                      <tbody>
-                                          <tr>
-                                              <td>28-July-2018 06:51:51</td>
-                                              <td>Laptop</td>
-                                              <td>Electronic</td>
-                                              <td><span class="badge badge-success">sold</span></td>
-                                              <td>
-                                                  <button class="btn btn-sm round btn-outline-info">Edit</button>
-                                              </td>
-                                              <td>
-                                                  <button class="btn btn-sm round btn-outline-danger">Delete</button>
-                                              </td>
-                                          </tr>
-                                      </tbody>
-                                  </table>
+                                    <table class="table table-hover js-basic-example dataTable table-custom mb-0">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Date Added</th>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                                <th>Price</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr 
+                                            v-for="(item, index) in inventories"
+                                            :key="index">
+                                                <td>{{ item.created_at }}</td>
+                                                <td>{{ item.name }}</td>
+                                                <td>{{ item.type }}</td>
+                                                <td>{{ item.description }}</td>
+                                                <td>${{ item.price }}</td>
+                                                <td>
+                                                    <span v-if="item.status == 1" class="badge badge-success">sold</span>
+                                                    <span v-else class="badge badge-danger">unsold</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                               </div>
                           </div>
                       </div>
@@ -377,14 +378,23 @@ export default {
         }
     },
     computed: {
-        ...mapState(useInventoryStore, []),
+        ...mapState(useInventoryStore, [
+            'inventories'
+        ]),
         ...mapState(useGeneralStore, [
             'API_URL'
         ]),
         ...mapState(useUserStore, [
             'token',
             'userIsAuth'
-        ])
+        ]),
+        totalPrice() {
+            let value = 0;
+            this.inventories.forEach(item => {
+                value += Number(item.price)
+            });
+            return value;
+        }
     },
     watch: {
         userIsAuth() {
@@ -399,7 +409,9 @@ export default {
         }
     },
     methods: {
-        ...mapActions(useInventoryStore, []),
+        ...mapActions(useInventoryStore, [
+            'storeInventories'
+        ]),
         ...mapActions(useUserStore, [
             'logoutUser'
         ]),
@@ -420,6 +432,24 @@ export default {
                 _this.loggingOut = false;
             });
         },
+        fetchInventory() {
+            const _this = this;
+            axios.get(`${_this.API_URL}inventories`, {
+                headers: {
+                    Authorization: `Bearer ${_this.token}`
+                }
+            }).then(RESPONSE => {
+                _this.storeInventories(RESPONSE.data.inventories);
+            }).catch(ERROR => {
+                console.log(ERROR);
+                alert(ERROR.response.data.message);
+            }).then(() => {
+                //
+            });
+        }
+    },
+    mounted() {
+        this.fetchInventory();
     }
 }
 </script>
